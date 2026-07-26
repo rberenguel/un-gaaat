@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#0f0f1a" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="media/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="media/icon.png" />
+    <link rel="stylesheet" href="fonts/phosphor/phosphor.css" />
+    <title>Un Gaaat</title>
+    <link rel="stylesheet" href="src/app.css" />
+  </head>
+  <body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="screen">
+      <div class="loading-box">
+        <img src="media/icon.png" class="app-logo" alt="Un Gaaat" />
+        <div class="loading-title">Un Gaaat</div>
+        <div id="loadingSubtitle" class="loading-subtitle">Loading cat brain…</div>
+        <div class="progress-track">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+        <div id="progressLabel" class="progress-label">0%</div>
+      </div>
+    </div>
+
+    <!-- Camera Screen -->
+    <div id="cameraScreen" class="screen hidden">
+      <div class="viewfinder-wrap">
+        <div class="viewfinder">
+          <video id="video" playsinline autoplay muted></video>
+          <div id="cameraError" class="camera-error hidden">
+            <i class="ph-light ph-camera-slash camera-error-icon"></i>
+            <div class="camera-error-msg">Camera unavailable</div>
+            <div class="camera-error-sub">
+              Camera access was denied or not available on this device.
+              You can still add cats by uploading a photo using the button below.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="controls-bar">
+        <button class="ctrl-btn side" id="uploadBtn" aria-label="Upload photo">
+          <i class="ph-light ph-upload-simple btn-icon"></i>
+          <span class="btn-label">Upload</span>
+        </button>
+        <button class="ctrl-btn shutter" id="captureBtn" aria-label="Capture"></button>
+        <button class="ctrl-btn side" id="flipBtn" aria-label="Flip camera">
+          <i class="ph-light ph-camera-rotate btn-icon"></i>
+          <span class="btn-label">Flip</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Scanning Overlay -->
+    <div id="scanningOverlay" class="overlay hidden">
+      <canvas id="scanCanvas"></canvas>
+      <div class="scan-content">
+        <i class="ph-light ph-scan scan-spinner"></i>
+        <div class="scan-text" id="scanText">Scanning for cats…</div>
+      </div>
+    </div>
+
+    <!-- Cat List Screen -->
+    <div id="listScreen" class="screen hidden">
+      <header class="list-header">
+        <span class="list-title">
+          <img src="media/icon.png" class="header-icon" alt="" /> Un Gaaat
+        </span>
+        <div class="list-actions">
+          <button class="icon-btn" id="importBtn" title="Import collection">
+            <i class="ph-light ph-upload-simple"></i>
+          </button>
+          <button class="icon-btn" id="exportBtn" title="Export collection">
+            <i class="ph-light ph-download-simple"></i>
+          </button>
+        </div>
+      </header>
+      <div class="cat-list" id="catList"></div>
+      <div class="controls-bar">
+        <button class="ctrl-btn side" id="listUploadBtn" aria-label="Upload photo">
+          <i class="ph-light ph-upload-simple btn-icon"></i>
+          <span class="btn-label">Upload</span>
+        </button>
+        <button class="ctrl-btn shutter" id="listCaptureBtn" aria-label="New capture"></button>
+        <div style="width:56px"></div>
+      </div>
+    </div>
+
+    <!-- Landscape blocker -->
+    <div id="landscapeBlocker" class="landscape-blocker hidden">
+      <i class="ph-light ph-device-rotate"></i>
+      <div>Please rotate to portrait</div>
+    </div>
+
+    <input type="file" id="fileInput"   accept="image/*"         style="display:none" />
+    <input type="file" id="importInput" accept="application/json" style="display:none" />
+
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>

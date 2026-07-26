@@ -1,0 +1,532 @@
+@font-face {
+  font-family: "Inter";
+  src: url("../../tessella/fonts/InterDisplay-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../../tessella/fonts/InterDisplay-Bold.woff2") format("woff2");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../../tessella/fonts/InterDisplay-Italic.woff2") format("woff2");
+  font-weight: normal;
+  font-style: italic;
+}
+
+:root {
+  --bg:       #0f0f1a;
+  --bg2:      #1a1a2e;
+  --fg:       #f0f0f0;
+  --fg-dim:   rgba(240, 240, 240, 0.55);
+  --accent:   #ff6b6b;
+  --border:   rgba(255, 255, 255, 0.1);
+  --chrome-h: calc(100px + env(safe-area-inset-bottom));
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden !important;
+  position: fixed;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ── Screens ──────────────────────────────────────────────────────── */
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden { display: none !important; }
+
+/* ── Loading ─────────────────────────────────────────────────────── */
+
+#loadingScreen {
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.loading-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px;
+  width: min(320px, 80vw);
+}
+
+.app-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  animation: bounce 1.2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+.loading-title {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.loading-subtitle {
+  font-size: 14px;
+  color: var(--fg-dim);
+  text-align: center;
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.2s ease;
+}
+
+.progress-label {
+  font-size: 12px;
+  color: var(--fg-dim);
+}
+
+/* ── Camera ──────────────────────────────────────────────────────── */
+
+.viewfinder-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 20px 20px 12px;
+  box-sizing: border-box;
+  min-height: 0;
+}
+
+.viewfinder {
+  position: relative;
+  width: 100%;
+  /* 3:4 portrait box that never overflows its container */
+  aspect-ratio: 3 / 4;
+  max-height: 100%;
+  max-width: calc((100% - 0px));
+  border-radius: 20px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 0 1.5px rgba(255,255,255,0.1);
+}
+
+#video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.camera-error-icon { font-size: 48px; display: block; }
+.camera-error-msg  { font-size: 18px; font-weight: 600; }
+.camera-error-sub  { font-size: 13px; color: var(--fg-dim); }
+
+/* ── Controls bar (shared) ───────────────────────────────────────── */
+
+.controls-bar {
+  flex-shrink: 0;
+  height: var(--chrome-h);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid var(--border);
+}
+
+/* ── Buttons ────────────────────────────────────────────────────── */
+
+.ctrl-btn {
+  border: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: transparent;
+}
+
+.ctrl-btn.shutter {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 4px solid #fff;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4), inset 0 -3px 0 rgba(0,0,0,0.2);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  flex-direction: row;
+}
+
+.ctrl-btn.shutter:active {
+  transform: scale(0.92);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.ctrl-btn.side {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  color: var(--fg);
+}
+
+.ctrl-btn.side:active { background: #2a2a42; }
+
+.btn-icon  { font-size: 20px; line-height: 1; }
+.btn-label { font-size: 10px; color: var(--fg-dim); }
+
+.icon-btn {
+  background: none;
+  border: 1.5px solid var(--border);
+  color: var(--fg);
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:active { background: rgba(255,255,255,0.08); }
+
+/* ── Scanning overlay ────────────────────────────────────────────── */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 20, 0.85);
+}
+
+#scanCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(12px) brightness(0.4);
+}
+
+.scan-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.scan-spinner {
+  font-size: 64px;
+  display: block;
+  animation: spinPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes spinPulse {
+  0%,100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50%     { transform: scale(1.15) rotate(10deg); opacity: 0.7; }
+}
+
+.scan-text {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--fg);
+}
+
+/* ── List screen ─────────────────────────────────────────────────── */
+
+.list-header {
+  flex-shrink: 0;
+  height: calc(56px + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
+  background: #000;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 16px;
+  box-sizing: border-box;
+}
+
+.list-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+}
+
+.list-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.cat-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-content: start;
+}
+
+.cat-list::-webkit-scrollbar { display: none; }
+
+/* ── Empty state ─────────────────────────────────────────────────── */
+
+.empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--fg-dim);
+  text-align: center;
+  padding: 48px 32px;
+}
+
+.empty-state-icon { font-size: 52px; display: block; }
+
+.empty-state-logo {
+  width: 140px;
+  height: 140px;
+  border-radius: 32px;
+  margin-bottom: 8px;
+}
+
+.empty-state-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.empty-state-sub {
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 280px;
+  text-align: center;
+}
+
+.empty-state-hint {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Sticker card ────────────────────────────────────────────────── */
+
+.sticker-card {
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.4), 0 0 0 1.5px rgba(255,255,255,0.12);
+  position: relative;
+  animation: cardIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: scale(0.93); }
+  to   { opacity: 1; transform: none; }
+}
+
+.card-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges; /* Safari */
+}
+
+.card-info {
+  padding: 10px 11px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.card-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  line-height: 1.2;
+}
+
+.card-meter-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.card-meter-track {
+  flex: 1;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.2);
+  overflow: hidden;
+}
+
+.card-meter-fill {
+  height: 100%;
+  border-radius: 3px;
+  opacity: 0.7;
+  transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.card-meter-value {
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.card-rarity-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.18);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.card-date {
+  font-size: 9px;
+  opacity: 0.55;
+}
+
+.card-delete {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: rgba(0,0,0,0.3);
+  border: none;
+  color: #fff;
+  opacity: 0.55;
+  font-size: 12px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 3px 5px;
+  border-radius: 6px;
+}
+
+.card-delete:active { opacity: 1; }
+
+/* ── No-cat toast ────────────────────────────────────────────────── */
+
+.toast {
+  position: fixed;
+  bottom: calc(var(--chrome-h) + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2c2c3e;
+  color: var(--fg);
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  z-index: 300;
+  white-space: nowrap;
+  animation: toastIn 0.25s ease, toastOut 0.3s ease 2s forwards;
+  pointer-events: none;
+}
+
+@keyframes toastIn  { from { opacity: 0; transform: translateX(-50%) translateY(10px); } }
+@keyframes toastOut { to   { opacity: 0; transform: translateX(-50%) translateY(10px); } }
+
+/* ── Landscape blocker ───────────────────────────────────────────── */
+
+.landscape-blocker {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.landscape-blocker > div:first-child { font-size: 48px; }
+
+@media (orientation: landscape) {
+  body.is-touch #landscapeBlocker { display: flex !important; }
+}
