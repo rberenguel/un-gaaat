@@ -2,7 +2,7 @@ import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@huggingface/transfo
 
 env.allowLocalModels  = true;
 env.allowRemoteModels = false;
-env.localModelPath    = '../models/';
+env.localModelPath    = './models/';
 
 // `ontouchstart in window` is true on iOS Safari (all modes, including iPad
 // desktop-mode which fakes a Mac UA) but false on actual macOS Safari.
